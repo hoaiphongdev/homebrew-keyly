@@ -28,7 +28,9 @@ cask "keyly" do
   zap trash: [
     "~/.config/keyly",
     "~/Library/Caches/com.keyly.app",
+    "~/Library/Caches/com.keyly.app.sparkle",
     "~/Library/HTTPStorages/com.keyly.app",
+    "~/Library/HTTPStorages/com.keyly.app.binarycookies",
     "~/Library/Preferences/com.keyly.app.plist",
   ]
 
