@@ -1,6 +1,6 @@
 cask "keyly" do
-  version "1.10.0"
-  sha256 "b55d0bea7fcf8f7ea919ae85d0fd9baaa90bb182c2a371da7767a975a1f6e104"
+  version "1.10.1"
+  sha256 "60b47c882878c94bf03e90a189ab01b8a05aa843f3484927b8736db0b3f14ba8"
 
   url "https://github.com/hoaiphongdev/keyly/releases/download/keyly-#{version}/Keyly.dmg"
   name "Keyly"
