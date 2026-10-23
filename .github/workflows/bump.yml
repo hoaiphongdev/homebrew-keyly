@@ -1,0 +1,45 @@
+name: Bump cask
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bump
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Update Casks/keyly.rb to the latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CASK=Casks/keyly.rb
+          TAG=$(gh release view --repo hoaiphongdev/keyly --json tagName -q .tagName)
+          LATEST="${TAG#keyly-}"
+          CURRENT=$(sed -n 's/^  version "\(.*\)"$/\1/p' "$CASK")
+          if [[ ! "$LATEST" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
+            echo "Skipping unexpected tag: $TAG"
+            exit 0
+          fi
+          if [[ "$LATEST" == "$CURRENT" ]]; then
+            echo "Already at $CURRENT"
+            exit 0
+          fi
+          curl -fsSL -o Keyly.dmg "https://github.com/hoaiphongdev/keyly/releases/download/$TAG/Keyly.dmg"
+          SHA=$(sha256sum Keyly.dmg | cut -d' ' -f1)
+          rm Keyly.dmg
+          sed -i "s/^  version \".*\"$/  version \"$LATEST\"/; s/^  sha256 \".*\"$/  sha256 \"$SHA\"/" "$CASK"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "keyly $LATEST"
+          git push
